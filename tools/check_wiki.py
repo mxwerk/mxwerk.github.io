@@ -13,7 +13,8 @@ Gates (exit 1 on any hit):
      second brain nobody can navigate into does not exist for the reader
   3. every page under wiki/ declares `cites:` and `verified_at:`
   4. with --repo: each cited path exists at HEAD, and none changed since
-     verified_at (`git diff --quiet <verified_at> HEAD -- <paths>`) — STALE
+     verified_at (`git diff --quiet <verified_at> HEAD -- <paths>`) — STALE;
+     a `lines:` range must fit inside the cited file at HEAD
   6. with --public: no docs/ or .claude/ file is tracked (plans and agent
      config name private hosts; this repo is public)
 
@@ -51,6 +52,12 @@ def cited_paths(fm):
     return [p.strip().strip("'\"") for p in
             re.findall(r"^[ \t]*-?[ \t]*(?:path:)?[ \t]*([^\s:][^\n]*?)[ \t]*$", m.group(1), re.M)
             if not re.match(r"^\s*lines:", p)]
+
+
+def cited_last_lines(fm):
+    """{path: highest line number its `lines:` names} — paths without a range are absent."""
+    return {p.strip().strip("'\""): max(map(int, re.findall(r"\d+", lines)))
+            for p, lines in re.findall(r"path:[ \t]*(\S+)[ \t]*\n[ \t]+lines:[ \t]*(.*\d.*)", fm)}
 
 
 def load(root):
@@ -108,10 +115,13 @@ def check(root, repo=None, public=False, project=False):
         if not sha:
             errors.append(f"{slug}: no verified_at:")
         if repo and paths and sha:
+            last = cited_last_lines(page["fm"])
             for p in paths:
-                if subprocess.run(["git", "-C", repo, "cat-file", "-e", f"HEAD:{p}"],
-                                  capture_output=True).returncode:
+                blob = subprocess.run(["git", "-C", repo, "show", f"HEAD:{p}"], capture_output=True)
+                if blob.returncode:
                     errors.append(f"{slug}: cited path missing at HEAD: {p}")
+                elif last.get(p, 0) > (n := len(blob.stdout.splitlines())):
+                    errors.append(f"{slug}: cites {p} to line {last[p]}, file has {n}")
             diff = subprocess.run(["git", "-C", repo, "diff", "--quiet", sha, "HEAD", "--", *paths],
                                   capture_output=True)
             if diff.returncode == 1:
