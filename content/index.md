@@ -20,7 +20,7 @@ That is how I approach software in general: understand the root, then derive the
 The development system I run my own projects on: coding agents do the typing, deterministic gates replace the reviewer, and an automated merge decision is measured in shadow mode before it gets any authority. With a [[wiki/harness/index|wiki]] that cites the code behind every claim.
 
 #### [[projects/agent-warden|agent-warden]]
-Checks what coding agents *claim* against real evidence, using two tiers of self-hosted LLMs. Measures its own judge (78 % recall vs. 33 % for a regex baseline) instead of trusting it.
+Checks what coding agents *claim* against real evidence, using two tiers of self-hosted LLMs. Measures its own judge instead of trusting it: 7 of 9 hand-labelled claims found, against 3 of 9 for a regex baseline. With a [[wiki/agent-warden/index|wiki]] that cites the code behind every claim.
 
 #### [[projects/agent-cockpit|agent-cockpit]]
 Web console to browse, launch and live-track the agents: React, Express 5, SQLite, 468 passing unit tests, accessibility and visual-regression gates.

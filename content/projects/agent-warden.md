@@ -1,90 +1,111 @@
 ---
 title: agent-warden — Checking What Coding Agents Claim
-description: A supervisory layer that checks a coding agent's claims ("tests pass", "file created") against real evidence using local LLMs — tiered, measured, human-in-the-loop.
+description: A daemon that checks a coding agent's claims ("tests pass", "file created") against git diffs and transcripts, with deterministic checks first, local models for what those miss, and every figure stated with its n.
 tags:
   - ai
   - typescript
   - engineering
-date: 2026-09-15
+date: 2026-10-08
 ---
-
 # agent-warden — Checking What Coding Agents Claim
 
-> **Note for readers:** a personal project, private repository. This page
-> describes the design and the measurements, not the code.
+> [!summary] TL;DR
+> A coding agent reports on its own work, and "tests pass" is a claim, not a
+> result. agent-warden compares such claims with artifacts the agent did not
+> write — the git diff, the tool calls in the transcript — and returns
+> confirmed, refuted or *could not check*. Deterministic checks run first, a
+> small local model covers what they miss, a larger one is asked only when the
+> first is unsure. The judge is advisory and has never been given the power to
+> block anything. Personal project, private repository.
 
-## The premise
+## The problem
 
-Coding agents rarely lie on purpose — but they routinely *assert* things the
-artifacts don't support: "tests pass" when no test ran, "file created" when a
-different file was touched, a step marked done that was skipped.
+Agents rarely lie on purpose, but they assert things the artifacts do not
+support: a step marked done that was skipped, a test that asserts nothing, a
+file "created" that is not in the diff. Grading those claims against the
+agent's own narration is gameable — a judge that reads the reasoning can be
+talked round.
 
-Grading those claims against the agent's own narration is gameable. So
-agent-warden grounds every verdict in **observable evidence** — git diffs, test
-runs, hook payloads — and never lets the worker grade itself.
+## How it is built
 
-## How it works: claim → evidence → verdict
+```mermaid
+flowchart LR
+  T[Agent transcript] --> D[Daemon<br/>loopback HTTP]
+  G[git diff] --> D
+  D --> K[Critics<br/>one failure class each]
+  K --> S[Small local model]
+  S -. low confidence .-> L[Larger local model]
+  K --> V[Verdict<br/>confirmed / refuted / abstain]
+  L --> V
+  V --> C[CLI]
+  V --> M[MCP adapter<br/>read-only]
+  V --> O[Telemetry<br/>metrics + logs]
+```
 
-Each claim is checked by a critic for one failure class — a claimed file that
-wasn't touched, a test without a real assertion (fake green), a skipped step, a
-sub-agent handoff that drifted from its brief, parallel sessions duplicating work.
-A verdict carries the failure class, a confidence, and the evidence
-(claimed vs. actual).
+One always-on daemon owns capture and judgment; the clients are thin.
+→ [[wiki/agent-warden/components/daemon|daemon]] ·
+[[wiki/agent-warden/components/critics|critics]] ·
+[[wiki/agent-warden/components/mcp-surface|MCP surface]] ·
+[[wiki/agent-warden/components/verdict-telemetry|telemetry]]
 
-**Two tiers, both self-hosted.** A small local model (via Ollama) triages every
-claim. Low-confidence verdicts escalate to a larger local model; if the tiers
-disagree, the case is flagged for mandatory human review. Nothing leaves the
-machine.
+## Key decisions
 
-**One daemon, pluggable clients.** The project started as a VS Code extension.
-Building it showed that the editor panel was not the product — the evidence
-pipeline was. It was re-scoped (and documented in ADRs) into an
-editor-independent daemon with thin clients: a CLI, an MCP adapter that feeds
-verdicts back into an agent session (advisory only, rate-capped), and VS Code as
-one optional viewer.
+- **Judge the artifact, never the narration.** A missing signal yields
+  *abstain*, not a pass. →
+  [[wiki/agent-warden/concepts/claim-evidence-verdict|claim, evidence, verdict]]
+- **A local model as overseer, a human deciding.** Self-critique inside the
+  worker and an overseer that acts on its own were both rejected. →
+  [[wiki/agent-warden/decisions/local-llm-overseer|decision]]
+- **Two tiers, both on my own hardware.** A disagreement between them forces
+  human review; a failed escalation degrades to the first verdict instead of
+  blocking. → [[wiki/agent-warden/decisions/two-tier-escalation|decision]]
+- **One daemon, pluggable surfaces.** The project began as an editor
+  extension; the evidence pipeline turned out to be the product. →
+  [[wiki/agent-warden/decisions/hybrid-daemon-pluggable-surfaces|decision]]
+- **The party being judged supplies the paths.** So the daemon verifies the
+  file descriptor it opened, and refuses where it cannot. →
+  [[wiki/agent-warden/decisions/evidence-read-hardening|decision]]
+- **The CI gate reads its rules from the commit,** so two runs of one commit
+  cannot be judged differently. →
+  [[wiki/agent-warden/decisions/gate-reads-rules-from-commit|decision]]
 
-## Measured, not assumed
-
-The interesting part is not that an LLM judges — it's whether that judgment is
-any good. The repo contains its own measurement harnesses and audit reports:
+## Measured, with n
 
 | Question | Result |
 |---|---|
-| LLM critic vs. a deterministic regex extractor (recall, hand-labelled set) | **78 % vs. 33 %**, no false positives either way |
-| Does the larger tier earn its latency? (same fixtures) | skipped-step recall 67 % → 100 %, cross-session duplicates 88 % → 100 %, handoff drift unchanged |
-| Evidence budget vs. latency target | the larger model missed an 8 s target by ~4.6× at the planned budget — the budget was retargeted to the measured number |
+| Finding a narrated action in prose: local model vs. regex | **7 of 9 vs. 3 of 9**, no false positive from either |
+| The same nine sentences, small vs. larger model | 6 of 9 vs. 9 of 9 |
+| Judging duplicate work across sessions, small vs. larger | 7 of 8 vs. 8 of 8 |
+| Judging a handoff against its brief, small vs. larger | 15 of 16 for both |
+| Deterministic detectors on seeded faults | 15 of 15, with 8 of 8 controls held |
 
-The reports state their own limits (small corpora), and the judge stays
-**advisory — it never gates**. Promoting it to a gate would need more evidence
-than exists.
+The sets are small and hand-labelled, and the nine-sentence corpus was built
+to defeat the regex — it measures a gap, not the system. Two runs of the small
+model on those nine sentences scored seven and six.
+→ [[wiki/agent-warden/concepts/measured-recall|measured recall, with its n]]
 
-## Engineering details worth noting
+## Limits
 
-- **Check-use-check on evidence files.** The daemon verifies that the file
-  descriptor it reads is the file it checked. The guarantee is Linux-specific,
-  so on other platforms the daemon *refuses* verified reads instead of silently
-  degrading.
-- **CI without carve-outs.** Lint, typecheck, the full test suite and build run
-  on every push and pull request, deliberately without path filters — "a gate
-  with a path filter is a gate with a hole." The web-component UI is tested in a
-  real browser, with the browser build pinned to the CI image.
-- **Dependency advisories handled on the record** — remediation goes through
-  pull requests, and a stale risk-acceptance note is rewritten rather than
-  silently deleted.
-- **23 ADRs** covering the pivot, the escalation design, the MCP contract and the
-  security hardening.
+- **Advisory only.** Nothing gates on a model's verdict; the evidence for that
+  does not exist yet.
+- **The decisions are ahead of the code in two places.** The editor panel is
+  not a client of the daemon yet, and capture is transcripts and git — the
+  planned hook and telemetry ingest is not built.
+- **The verified evidence read is Linux-only.** Elsewhere the daemon refuses
+  rather than read unverified.
+- **Latency.** The larger model missed its first 8 s target by a wide margin;
+  the target is now 40 s, taken from the measurement.
+- One operator, one machine. Nothing here has been run by a team.
 
-## Stack
+## Go deeper
 
-| Area | Technology |
-|---|---|
-| Core | TypeScript, Node.js |
-| Models | Ollama (two self-hosted tiers) |
-| Clients | CLI, Model Context Protocol SDK, VS Code Extension API, Lit |
-| Telemetry | OpenTelemetry, uPlot |
-| Build & test | esbuild, Vitest (incl. browser mode via Playwright) |
-| CI | Forgejo Actions on a self-hosted rootless runner |
+The [[wiki/agent-warden/index|agent-warden wiki]] holds one short page per
+decision, concept and component. Each cites the files it describes and the
+commit it was checked against, and is flagged stale when those files change.
+Counts are generated from the repository:
+[[wiki/agent-warden/inventory|inventory]].
 
-**Status:** in active development (milestone 1). Part of a self-hosted agent
-platform together with [[projects/claude-setup|the SDLC system]] and
+**Stack:** TypeScript, Node.js, Ollama, Model Context Protocol SDK,
+OpenTelemetry, Vitest, Forgejo Actions. Part of a self-hosted agent platform
+with [[projects/claude-setup|the SDLC system]] and
 [[projects/agent-cockpit|agent-cockpit]].
