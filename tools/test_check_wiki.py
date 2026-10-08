@@ -32,7 +32,7 @@ def head(root):
                           capture_output=True, text=True).stdout.strip()
 
 
-CITED = "cites:\n  - path: src/a.py\n    lines: 1-2\nverified_at: {sha}\n"
+CITED = "cites:\n  - path: src/a.py\n    lines: 1-1\nverified_at: {sha}\n"
 
 
 def clean(sha="abc1234"):
@@ -91,6 +91,14 @@ def test_cited_path_missing():
     files["wiki/p/judge.md"] = files["wiki/p/judge.md"].replace("src/a.py", "src/gone.py")
     root = site(files, git=True)
     assert any("missing at HEAD: src/gone.py" in e for e in check(root, repo=str(root)))
+
+
+def test_cited_range_past_end_of_file():
+    files = clean()
+    files["wiki/p/judge.md"] = files["wiki/p/judge.md"].replace("lines: 1-1", "lines: 1-1, 40-52")
+    root = site(files, git=True)
+    errs = check(root, repo=str(root))
+    assert any("cites src/a.py to line 52, file has 1" in e for e in errs), errs
 
 
 def test_private_dirs_tracked():
