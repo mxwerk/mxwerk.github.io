@@ -10,8 +10,8 @@ cites:
   - path: agents/bus-router.md
     lines: 1-22
   - path: agents/registry.json
-    lines: 49-54
-verified_at: 82cca7c
+    lines: 50-55
+verified_at: 34b5c5a
 ---
 
 # A push router replaces per-agent polling
