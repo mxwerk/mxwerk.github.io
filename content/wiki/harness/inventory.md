@@ -1,6 +1,6 @@
 ---
 title: Inventory
-description: Counts derived from the repository tree at ae529aa; generated on every sync, never typed.
+description: Counts derived from the repository tree at dc93e72; generated on every sync, never typed.
 cites:
   - path: docs/adr
   - path: skills
@@ -9,12 +9,12 @@ cites:
   - path: hooks
   - path: rulesets
   - path: agents/registry.json
-verified_at: ae529aa
+verified_at: dc93e72
 ---
 
 # Inventory
 
-> Generated from the repository at commit `ae529aa` — these figures are counted, not written. [[wiki/harness/index|↑ Wiki]]
+> Generated from the repository at commit `dc93e72` — these figures are counted, not written. [[wiki/harness/index|↑ Wiki]]
 
 | What | Count |
 |---|---|
