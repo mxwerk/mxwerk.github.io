@@ -8,14 +8,14 @@ cites:
   - path: scripts/merge-exec.py
     lines: 1-8
   - path: agents/registry.json
-    lines: 337-342
+    lines: 338-343
   - path: docs/adr/096-autonomous-merger-is-a-watcher-not-a-bus-effector.md
     lines: 1-8, 120-160
   - path: docs/adr/067-decline-slice-2b-gate-flip.md
     lines: 28-36
   - path: scripts/tests/test_merge_watch.py
     lines: 119-131
-verified_at: 82cca7c
+verified_at: 34b5c5a
 ---
 
 # Shadow before authority

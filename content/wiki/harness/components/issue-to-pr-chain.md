@@ -8,13 +8,15 @@ cites:
   - path: scripts/bus-router.py
     lines: 74-96
   - path: agents/registry.json
-    lines: 55-70, 159-162, 253-256, 277-280, 337-340
+    lines: 56-71, 160-163, 254-257, 278-281, 338-341
   - path: scripts/poc/issue-runner.sh
     lines: 1-24, 843-850, 923-924
   - path: scripts/cron/issue-runner.sh
     lines: 11-13
   - path: scripts/cron/forgejo-pr-watch.sh
-    lines: 1-24
+    lines: 1-24, 91-99, 212-223
+  - path: scripts/review_enqueue.py
+    lines: 240-268
   - path: scripts/cron/review-mr.sh
     lines: 8-13
   - path: scripts/merge-watch.py
@@ -23,7 +25,7 @@ cites:
     lines: 1-6, 64-81
   - path: docs/TODO/2026-09-10-git-pushes-from-loops-carry-the-operator-identity.md
     lines: 1-13, 79-110, 122-138
-verified_at: 82cca7c
+verified_at: 34b5c5a
 ---
 
 # The issue-to-PR chain
@@ -45,7 +47,7 @@ flowchart LR
   P["issue-picker<br/>ready label"] -->|spawn-request| R["bus-router"]
   R -->|held until marker| H{{"operator marker<br/>per issue"}}
   H --> I["issue-runner<br/>worktree + pipeline"]
-  I -->|opens change request| Q["PR watcher"]
+  I -->|opens change request| Q["PR watcher<br/>holds until CI is green"]
   Q -->|spawn-request| V["review-mr<br/>bot identity"]
   V --> C["comments only"]
   C -.-> M["merge-watch<br/>shadow: records"]
@@ -63,7 +65,8 @@ confirmation variable.
 Every stage is a cron entry in one registry, and nothing is event-driven. The
 router and the PR watcher run every ten minutes; the picker and the merge
 shadow run hourly. A ready issue therefore reaches a review in tens of minutes
-at best, and never faster than the operator sets the marker.
+at best, never faster than the operator sets the marker, and not before CI
+is green on the head to be reviewed.
 
 | Stage | Acts as |
 |---|---|
@@ -83,6 +86,11 @@ pattern.
   a new session, and the review wrapper uses a least-privilege bot token
   rather than the operator's. Independence is protocol and identity together,
   as in [[wiki/harness/concepts/principal-agent-framing]].
+- **A review waits for green CI.** The watcher asks the forge whether the
+  pushed head declares workflows, and if it does, enqueues nothing while their
+  status is pending, red, missing or unreadable. A fix that turns CI green
+  moves the head, and the moved head would be reviewed again. A repository
+  without CI is never held.
 - **Review output is reversible.** Autoposted reviews never perform the
   platform approval, so the review stage can fire without a per-run marker.
 - **Merge is split into a decider and an executor.** `merge-watch` contains no
@@ -96,5 +104,7 @@ pattern.
   invokes it armed; this page does not claim otherwise.
 - A review counts as done only when its verdict row exists, which is why a
   killed review is retried instead of silently skipped.
+- A head whose CI never reports gets no review. The watcher escalates that
+  once after two hours; it does not start the review anyway.
 - Markers are one-shot and per issue, so throughput is bounded by the
   operator, by design.
