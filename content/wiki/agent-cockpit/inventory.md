@@ -4,7 +4,7 @@ description: Counts derived from the repository tree at 9560e06; generated on ev
 cites:
   - path: docs/adr
   - path: backend/test
-  - path: frontend/src
+  - path: frontend
   - path: frontend/visual/baselines
 verified_at: 9560e06
 ---
@@ -17,5 +17,5 @@ verified_at: 9560e06
 |---|---|
 | Architecture decision records | 5 |
 | Backend test files | 21 |
-| Frontend test files | 22 |
+| Frontend test files | 23 |
 | Screenshot baselines | 16 |

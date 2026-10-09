@@ -23,7 +23,7 @@ The development system I run my own projects on: coding agents do the typing, de
 Checks what coding agents *claim* against real evidence, using two tiers of self-hosted LLMs. Measures its own judge instead of trusting it: 7 of 9 hand-labelled claims found, against 3 of 9 for a regex baseline. With a [[wiki/agent-warden/index|wiki]] that cites the code behind every claim.
 
 #### [[projects/agent-cockpit|agent-cockpit]]
-Web console to browse, launch and live-track the agents: React, Express 5, SQLite, a launch cap that holds under a race, accessibility and visual-regression gates.
+Web console to browse, launch and live-track the agents: React, Express 5, SQLite, just under 500 unit tests, accessibility and visual-regression gates.
 
 ### Other projects
 
