@@ -60,7 +60,9 @@ itself, and one gate runner whose exit code decides whether a change lands.
   is a hypothesis. → [[wiki/harness/concepts/verify-the-verifier|verify the verifier]]
 - **Authority comes after measurement.** The merge decision runs hourly in a
   script that contains no merge call; the script that can merge is a separate
-  file and is not armed. → [[wiki/harness/concepts/shadow-before-authority|shadow before authority]]
+  file, and it got a schedule only after that record: it now runs every ten
+  minutes on this repository, one merge per run at most, behind a kill switch
+  the forge enforces. → [[wiki/harness/concepts/shadow-before-authority|shadow before authority]]
 - **Review is a different process under a different credential,** so the
   reviewer is not the author. → [[wiki/harness/components/issue-to-pr-chain|issue-to-PR chain]]
 
@@ -70,7 +72,8 @@ The agents' own claims are checked by a separate project,
 ## Limits
 
 - One operator, one server. Nothing here has been run by a team.
-- Merging is human. The autonomous merger is built and measured, not armed.
+- The autonomous merger acts on this repository only; the three project repos
+  still merge by hand.
 - Rules about *how to reason* are still prose and hold only as long as the
   agent follows them. → [[wiki/harness/decisions/judgment-rules-encoding|decision]]
 - A known defect: loops that open change requests still act under the
