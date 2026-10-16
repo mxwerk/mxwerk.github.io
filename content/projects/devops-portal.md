@@ -10,12 +10,12 @@ date: 2026-06-30
 
 # Studierendenportal — DevOps Evolution
 
-A project from the Web Engineering 2 (WE2) course at BHT Berlin. The starting point was an existing student applicant portal; the assignment, in the course's own words, was to bring it to production
-readiness. <!-- claim-ok: describes the brief, not a claim about the result --> We did this in two distinct architectural phases, which ended up being a useful exercise in evaluating trade-offs between monorepo and polyrepo structures.
+My own project, built alone across two courses at BHT Berlin. In Web Engineering 2 (WE2) I built the student applicant portal as a monorepo; in a later course, *Professionelle Web-Anwendungen umsetzen und betreiben*, I restructured it and developed it further, with the brief, in the course's own words, to bring it to production
+readiness. <!-- claim-ok: describes the brief, not a claim about the result --> The two phases ended up being a useful exercise in evaluating trade-offs between monorepo and polyrepo structures.
 
 ## Phase 1 — Turborepo Monorepo
 
-Consolidated the codebase into a **pnpm/Turborepo monorepo** with five packages (frontend, backend, shared types, contracts, test-utils). Benefits: single-repo atomic changes, shared TypeScript types across package boundaries, unified CI pipeline.
+Built it as a **pnpm/Turborepo monorepo** with five packages (frontend, backend, shared types, contracts, test-utils). Benefits: single-repo atomic changes, shared TypeScript types across package boundaries, unified CI pipeline.
 
 ## Phase 2 — Polyrepo with OpenAPI Contracts
 
