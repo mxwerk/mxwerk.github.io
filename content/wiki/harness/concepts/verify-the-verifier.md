@@ -8,12 +8,12 @@ cites:
   - path: scripts/tests/test_forgejo_merge_payload.sh
     lines: 41-75
   - path: scripts/tests/test_merge_watch.py
-    lines: 119-131
+    lines: 124-158
   - path: orchestrator/tests/test_phase_marker_scope.py
     lines: 72-80
   - path: orchestrator/tests/test_protect_plans_hook.py
     lines: 1-11
-verified_at: 82cca7c
+verified_at: 852cda1
 ---
 
 # Verify the verifier

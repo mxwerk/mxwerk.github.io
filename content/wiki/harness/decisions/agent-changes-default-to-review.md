@@ -10,8 +10,8 @@ cites:
   - path: orchestrator/gates/workflow_check.py
     lines: 172-195, 213-228
   - path: rules/git-workflow.md
-    lines: 6-12, 57-70
-verified_at: 82cca7c
+    lines: 6-12, 73-86
+verified_at: 61758d8
 ---
 
 # Agent-authored changes default to review

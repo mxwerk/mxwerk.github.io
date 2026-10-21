@@ -15,7 +15,7 @@ cites:
     lines: 27-30, 55-56
   - path: docs/adr/093-autonomous-review-findings-carry-resolvable-evidence.md
     lines: 31-40
-verified_at: 82cca7c
+verified_at: 61758d8
 ---
 
 # The developer as principal

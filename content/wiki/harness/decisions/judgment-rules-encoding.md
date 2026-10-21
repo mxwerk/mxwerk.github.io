@@ -6,14 +6,14 @@ cites:
   - path: docs/adr/013-behavioral-rule-encoding-surface.md
     lines: 19-53
   - path: rules/git-workflow.md
-    lines: 195-206
+    lines: 211-222
   - path: agents/reviewer.md
     lines: 128-131
   - path: rules/README.md
     lines: 1-20
   - path: docs/TODO/2026-05-22-detection-and-self-healing-cluster.md
     lines: 26-38
-verified_at: 82cca7c
+verified_at: 1538367
 ---
 
 # Where judgment rules are encoded
