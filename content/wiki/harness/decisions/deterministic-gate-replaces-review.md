@@ -6,10 +6,10 @@ cites:
   - path: docs/adr/010-trunk-execution-path-sdlc-pipeline.md
     lines: 22-47
   - path: rules/git-workflow.md
-    lines: 86-104
+    lines: 102-120
   - path: orchestrator/gates/run.py
     lines: 588-596, 678-690
-verified_at: 3c2f0d1
+verified_at: 1538367
 ---
 
 # A deterministic gate replaces review on trunk

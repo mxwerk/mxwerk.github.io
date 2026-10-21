@@ -11,7 +11,7 @@ cites:
     lines: 1-22
   - path: agents/registry.json
     lines: 50-55
-verified_at: 34b5c5a
+verified_at: 852cda1
 ---
 
 # A push router replaces per-agent polling

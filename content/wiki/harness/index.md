@@ -29,4 +29,4 @@ STALE once a cited file changes. Pages start as `draft: true`; the operator appr
 
 - [[wiki/harness/components/edit-boundary-hooks|Edit-boundary hooks]] — Rules that must hold are enforced by hooks on the edit and shell call itself, so no entry point can route around them.
 - [[wiki/harness/components/gate-runner|The gate runner]] — One script turns a repository's locked rulesets plus a universal set into a single exit code, and it separates "failed" from "could not check".
-- [[wiki/harness/components/issue-to-pr-chain|The issue-to-PR chain]] — Cron-driven scripts take a labeled issue to a reviewed pull request, with an operator marker before any code lands and merging still outside the chain.
+- [[wiki/harness/components/issue-to-pr-chain|The issue-to-PR chain]] — Cron-driven scripts take a labeled issue to a reviewed pull request, with an operator marker before any code lands and an armed merger on the config repository only.

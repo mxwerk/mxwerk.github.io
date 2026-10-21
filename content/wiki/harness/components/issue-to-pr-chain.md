@@ -1,6 +1,6 @@
 ---
 title: The issue-to-PR chain
-description: Cron-driven scripts take a labeled issue to a reviewed pull request, with an operator marker before any code lands and merging still outside the chain.
+description: Cron-driven scripts take a labeled issue to a reviewed pull request, with an operator marker before any code lands and an armed merger on the config repository only.
 draft: false
 cites:
   - path: scripts/cron/issue-picker.sh
@@ -8,9 +8,9 @@ cites:
   - path: scripts/bus-router.py
     lines: 74-96
   - path: agents/registry.json
-    lines: 56-71, 160-163, 254-257, 278-281, 338-341
+    lines: 56-71, 160-163, 254-257, 278-281, 338-349
   - path: scripts/poc/issue-runner.sh
-    lines: 1-24, 843-850, 923-924
+    lines: 1-24, 846-853, 926-927
   - path: scripts/cron/issue-runner.sh
     lines: 11-13
   - path: scripts/cron/forgejo-pr-watch.sh
@@ -22,18 +22,23 @@ cites:
   - path: scripts/merge-watch.py
     lines: 1-8
   - path: scripts/merge-exec.py
-    lines: 1-6, 64-81
+    lines: 1-6, 67-84
+  - path: scripts/cron/merge-exec.sh
+    lines: 1-18, 57-60
+  - path: docs/TODO/.closed/2026-10-01-merge-exec-runs-only-by-hand.md
+    lines: 157-235
   - path: docs/TODO/2026-09-10-git-pushes-from-loops-carry-the-operator-identity.md
     lines: 1-13, 79-110, 122-138
-verified_at: 34b5c5a
+verified_at: 1538367
 ---
 
 # The issue-to-PR chain
 
 > **TL;DR** — Separate scripts pick a ready issue, run the pipeline in a
 > worktree, open a pull request, and enqueue an independent review under a
-> different credential. A human marker gates the code-landing stage, and the
-> merge stage only records what it would do. [[wiki/harness/index|↑ Wiki]]
+> different credential. A human marker gates the code-landing stage. The merge
+> stage merges unattended on the config repository and only records what it
+> would do everywhere else. [[wiki/harness/index|↑ Wiki]]
 
 ## What it does
 
@@ -50,7 +55,9 @@ flowchart LR
   I -->|opens change request| Q["PR watcher<br/>holds until CI is green"]
   Q -->|spawn-request| V["review-mr<br/>bot identity"]
   V --> C["comments only"]
-  C -.-> M["merge-watch<br/>shadow: records"]
+  V --> D[("review record<br/>verdict + findings")]
+  D -.->|polled by its own cron| M["merge-watch<br/>shadow: records"]
+  D -.->|polled by its own cron| E["merge-exec<br/>armed: config repo only"]
 ```
 
 The picker only queues work from repositories on its opt-in list. The router
@@ -63,10 +70,10 @@ confirmation variable.
 ## Cadence and identity
 
 Every stage is a cron entry in one registry, and nothing is event-driven. The
-router and the PR watcher run every ten minutes; the picker and the merge
-shadow run hourly. A ready issue therefore reaches a review in tens of minutes
-at best, never faster than the operator sets the marker, and not before CI
-is green on the head to be reviewed.
+router, the PR watcher and the armed merger run every ten minutes; the picker
+and the merge shadow run hourly. A ready issue therefore reaches a review in
+tens of minutes at best, never faster than the operator sets the marker, and
+not before CI is green on the head to be reviewed.
 
 | Stage | Acts as |
 |---|---|
@@ -96,12 +103,15 @@ pattern.
 - **Merge is split into a decider and an executor.** `merge-watch` contains no
   merge call at all, so a shadow run cannot be flipped by a flag
   ([[wiki/harness/concepts/shadow-before-authority]]). `merge-exec` is a separate file that
-  is inert without `--arm`.
+  is inert without `--arm`; only its cron wrapper passes the flag, pinned to
+  the config repository.
 
 ## Limits
 
-- The final merge is human. The executor exists but its header says nothing
-  invokes it armed; this page does not claim otherwise.
+- The final merge is human everywhere except the config repository. There the
+  executor has run armed from cron since 2026-10-15, at most one merge per run;
+  the project repositories have no merger. Its header still says nothing
+  invokes it armed, which the registry row now contradicts.
 - A review counts as done only when its verdict row exists, which is why a
   killed review is retried instead of silently skipped.
 - A head whose CI never reports gets no review. The watcher escalates that
