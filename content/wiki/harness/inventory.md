@@ -1,6 +1,6 @@
 ---
 title: Inventory
-description: Counts derived from the repository tree at 1840b33; generated on every sync, never typed.
+description: Counts derived from the repository tree at 9179423; generated on every sync, never typed.
 cites:
   - path: docs/adr
   - path: skills
@@ -9,12 +9,12 @@ cites:
   - path: hooks
   - path: rulesets
   - path: agents/registry.json
-verified_at: 1840b33
+verified_at: 9179423
 ---
 
 # Inventory
 
-> Generated from the repository at commit `1840b33` — these figures are counted, not written. [[wiki/harness/index|↑ Wiki]]
+> Generated from the repository at commit `9179423` — these figures are counted, not written. [[wiki/harness/index|↑ Wiki]]
 
 | What | Count |
 |---|---|

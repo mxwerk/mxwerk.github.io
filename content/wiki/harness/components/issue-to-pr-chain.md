@@ -6,11 +6,11 @@ cites:
   - path: scripts/cron/issue-picker.sh
     lines: 1-20
   - path: scripts/bus-router.py
-    lines: 74-96
+    lines: 77-99
   - path: agents/registry.json
-    lines: 56-71, 160-163, 254-257, 278-281, 338-349
+    lines: 57-72, 161-164, 255-258, 279-282, 339-350
   - path: scripts/poc/issue-runner.sh
-    lines: 1-24, 846-853, 926-927
+    lines: 1-24, 892-899, 919-942, 996-997
   - path: scripts/cron/issue-runner.sh
     lines: 11-13
   - path: scripts/cron/forgejo-pr-watch.sh
@@ -28,8 +28,8 @@ cites:
   - path: docs/TODO/.closed/2026-10-01-merge-exec-runs-only-by-hand.md
     lines: 157-235
   - path: docs/TODO/2026-09-10-git-pushes-from-loops-carry-the-operator-identity.md
-    lines: 1-13, 79-110, 122-138
-verified_at: 1538367
+    lines: 1-13, 79-131, 172-188
+verified_at: a7b9a76
 ---
 
 # The issue-to-PR chain
@@ -79,13 +79,14 @@ not before CI is green on the head to be reviewed.
 |---|---|
 | Review | a least-privilege bot token; the wrapper refuses the operator's |
 | Merge executor | its own credential file; a missing key is a halt, with no fallback to a token that happens to work |
-| Runner opening a change request | whatever account the forge CLI is logged in as — the runner selects no credential itself |
+| Runner opening a change request | on Forgejo with `tea`: `agent-bot`, through a bot-only config, halting before the push on any other login; other tracker CLIs are not pinned |
 
-The last row is a known defect, not a design. The backlog tracks it as
-must-fix, as one instance of a wider finding: loops that push or open change
-requests do so under the operator's identity, which makes "who did this"
-unanswerable from the record. The review and merge stages show the intended
-pattern.
+The last row was a known defect until 2026-10-22, when the runner stopped
+taking whatever login `tea` held. The push that precedes it still runs under
+the operator's SSH key, so a loop's commit on a branch is not attributable from
+the record. The backlog tracks that as must-fix; the operator decided to move
+the loops to a per-repository deploy key. The review and merge stages show the
+intended pattern.
 
 ## Design choices
 
@@ -110,8 +111,8 @@ pattern.
 
 - The final merge is human everywhere except the config repository. There the
   executor has run armed from cron since 2026-10-15, at most one merge per run;
-  the project repositories have no merger. Its header still says nothing
-  invokes it armed, which the registry row now contradicts.
+  the project repositories have no merger. Its header names the cron wrapper
+  as the only scheduled caller that passes `--arm`.
 - A review counts as done only when its verdict row exists, which is why a
   killed review is retried instead of silently skipped.
 - A head whose CI never reports gets no review. The watcher escalates that
