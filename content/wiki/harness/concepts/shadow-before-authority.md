@@ -10,29 +10,30 @@ cites:
   - path: scripts/cron/merge-exec.sh
     lines: 1-18, 57-60
   - path: agents/registry.json
-    lines: 338-349
+    lines: 339-350
   - path: docs/adr/096-autonomous-merger-is-a-watcher-not-a-bus-effector.md
-    lines: 1-8, 120-160
+    lines: 1-8, 120-160, 174-184
   - path: docs/adr/067-decline-slice-2b-gate-flip.md
     lines: 28-36
   - path: scripts/tests/test_merge_watch.py
     lines: 124-158
   - path: docs/TODO/.closed/2026-10-01-merge-exec-runs-only-by-hand.md
-    lines: 15-30, 157-235
+    lines: 15-30, 108-114, 157-235
   - path: docs/TODO/2026-10-16-merge-exec-refusal-does-not-stop-the-run.md
     lines: 1-46
   - path: docs/TODO/2026-10-16-merge-exec-refusal-exits-zero.md
     lines: 1-38
   - path: docs/TODO/2026-10-01-protected-paths-are-shaped-for-one-repo.md
     lines: 1-51
-verified_at: 1538367
+verified_at: 49a9318
 ---
 
 # Shadow before authority
 
 > **TL;DR** — The autonomous merger was built as two scripts. One decides and
 > records, hourly, and contains no merge call. The other can merge, and is a
-> separate file. Since 2026-10-15 the second runs armed from cron, on this
+> separate file. Run armed by hand, it merged nine pull requests from
+> 2026-09-30 to 2026-10-03; since 2026-10-15 it runs armed from cron, on this
 > repository only, and the shadow keeps running beside it.
 > [[wiki/harness/index|↑ Wiki]]
 
@@ -63,8 +64,8 @@ flowchart LR
   merges only with `--arm`. The registry now has a second row, `merge-exec`,
   every ten minutes, whose wrapper passes `--arm` with `--repo` pinned to the
   config repository; no other cron caller passes the flag. The script's own
-  header still says nothing runs it that way. That sentence predates the row
-  and is stale. The shadow loop keeps its hourly row.
+  header names that wrapper as the only cron caller that passes it. The shadow
+  loop keeps its hourly row.
 - **Containment is the forge, not the code.** The merge bot is a separate
   account, and whether it may merge is decided by the branch-protection merge
   whitelist on `main`, which the merger never reads. A proof script shows the
@@ -87,9 +88,10 @@ most one pull request (`MAX_MERGES_PER_RUN = 1`), so six runs an hour allow at
 most 144 merges a day. The three project repositories the PR watcher also
 serves have no merger, and their merges are still by hand.
 
-The ADR has not caught up. It is still marked *Proposed*, and its follow-ups
-still say the bot is in no merge whitelist, "which is what keeps this ADR
-unarmed". The ticket records the bot in the whitelist since 2026-09-30.
+The ADR stayed *Proposed* after arming until an amendment of 2026-10-22
+accepted it. The amendment records the bot in the whitelist since 2026-09-30,
+the nine merges by hand to 2026-10-03 and the cron runs since 2026-10-15, and
+supersedes the follow-up that called the ADR unarmed.
 
 ## What it costs / where it does not reach
 

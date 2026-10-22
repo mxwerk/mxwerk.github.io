@@ -6,12 +6,12 @@ cites:
   - path: docs/adr/028-push-router-and-spawn-protocol.md
     lines: 11-25, 175-203
   - path: scripts/bus-router.py
-    lines: 1-44, 67-74
+    lines: 1-44, 67-77
   - path: agents/bus-router.md
     lines: 1-22
   - path: agents/registry.json
-    lines: 50-55
-verified_at: 852cda1
+    lines: 51-56
+verified_at: a7b9a76
 ---
 
 # A push router replaces per-agent polling
