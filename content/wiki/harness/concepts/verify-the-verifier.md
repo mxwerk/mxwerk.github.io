@@ -13,7 +13,11 @@ cites:
     lines: 72-80
   - path: orchestrator/tests/test_protect_plans_hook.py
     lines: 1-11
-verified_at: 852cda1
+  - path: docs/adr/093-autonomous-review-findings-carry-resolvable-evidence.md
+    lines: 31-40, 129-139
+  - path: docs/audits/2026-10-23_ci-diagnoses-citation-remeasure.md
+    lines: 41-61
+verified_at: c8d54a7
 ---
 
 # Verify the verifier
@@ -59,6 +63,19 @@ flowchart LR
   B -- no --> C[hypothesis, not evidence]
   B -- yes --> D[evidence]
 ```
+
+## A check that was itself wrong
+
+The stamp on autonomous findings matched the shape `path:line` and never
+followed it, so all 221 cited `ci-diagnoses` findings counted as evidence. The
+content check that replaced it followed each citation and reported 90 that
+resolve to nothing. Before that number was used, the check itself was checked:
+it had resolved every citation literally against one repository's current tree.
+Re-judged against each finding's own repository at the time it was written, 32
+had been right, 48 named an existing line without its directory, 7 were library
+frames from a stack trace, 2 were `host:port` matches, and one pointed past the
+end of a file. The first check gave a false green, its replacement a false red,
+and both were found the same way: by asking what the check had actually touched.
 
 ## What it costs / where it does not reach
 

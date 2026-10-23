@@ -8,7 +8,7 @@ cites:
   - path: scripts/bus-router.py
     lines: 77-99
   - path: agents/registry.json
-    lines: 57-72, 161-164, 255-258, 279-282, 339-350
+    lines: 66-81, 170-173, 264-267, 288-291, 348-359
   - path: scripts/poc/issue-runner.sh
     lines: 1-24, 892-899, 919-942, 996-997
   - path: scripts/cron/issue-runner.sh
@@ -29,7 +29,7 @@ cites:
     lines: 157-235
   - path: docs/TODO/2026-09-10-git-pushes-from-loops-carry-the-operator-identity.md
     lines: 1-13, 79-131, 172-188
-verified_at: a7b9a76
+verified_at: a61b9f8
 ---
 
 # The issue-to-PR chain
