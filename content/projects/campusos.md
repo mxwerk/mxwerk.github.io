@@ -47,12 +47,12 @@ The scraping microservice, grades, enrollment certificate, Moodle sync, authenti
 
 ## Stack
 
-| Layer | Technology |
-|---|---|
-| Frontend | Next.js 16 (App Router), React 19, Tailwind v4, shadcn/ui (Base UI), TanStack Query |
-| Backend / Data | Supabase (self-hosted), Drizzle ORM, PostgreSQL |
-| Scraping | Separate microservice: Hono + playwright-core (Docker) |
-| Mail | IMAP (imapflow, mailparser), nodemailer |
-| Testing | Vitest, Testing Library, Playwright, MSW |
-| Architecture guard | dependency-cruiser (FSD layer rules in CI) |
-| Internationalisation | next-intl |
+| Layer                | Technology                                                                          |
+| -------------------- | ----------------------------------------------------------------------------------- |
+| Frontend             | Next.js 16 (App Router), React 19, Tailwind v4, shadcn/ui (Base UI), TanStack Query |
+| Backend / Data       | Supabase (self-hosted), Drizzle ORM, PostgreSQL                                     |
+| Scraping             | Separate microservice: Hono + playwright-core (Docker)                              |
+| Mail                 | IMAP (imapflow, mailparser), nodemailer                                             |
+| Testing              | Vitest, Testing Library, Playwright, MSW                                            |
+| Architecture guard   | dependency-cruiser (FSD layer rules in CI)                                          |
+| Internationalisation | next-intl                                                                           |
