@@ -20,6 +20,19 @@ A team project (6 members) from the Projekt module at BHT Berlin. CampusOs is a 
 - **Mensa plan** — current canteen menu pulled and displayed in-app
 - **Mail** — the BHT mailbox inside the application (IMAP)
 
+## My part
+
+I was one of six. My parts:
+
+- **The test and CI setup.** I set up the pipeline that runs on every change: Vitest and Playwright, the coverage thresholds, and dependency-cruiser checking the FSD layer rules. I maintained the CI configuration for the rest of the project.
+- **The workspace for the team's AI assistants.** The Claude Code setup the team worked in: the commands for issue, fix and implementation work, the hooks that check edits and commits, the project rules, and several of the project's own skills. A teammate set up the base and added the third-party skill packs.
+- **The mail feature.** The BHT mailbox inside the app, over IMAP: reading, filters, hiding mails, and the tests for it.
+- **The calendar sync** and its database tables.
+- **Shared UI components** that the feature screens are built from.
+- **Database migrations** for the tables of the features above.
+
+The scraping microservice, grades, enrollment certificate, Moodle sync, authentication and the dashboard were built mainly by teammates.
+
 ## Technical decisions worth noting
 
 **Scraping as a separate microservice** — the BHT student portal exposes no API for grades, calendar or the enrollment certificate. A small dedicated service (Hono + playwright-core, run in Docker) does the browser automation, so no headless browser runs inside the Next.js app or on serverless hosting.
