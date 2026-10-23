@@ -8,14 +8,14 @@ cites:
   - path: hooks/pre-edit-phase-gate.py
     lines: 10-38
   - path: hooks/pre-edit-phase-gate.py
-    lines: 57-88
+    lines: 57-110
   - path: hooks/pre-edit-phase-gate.py
-    lines: 337-372
+    lines: 359-394
   - path: hooks/pre-edit-phase-gate.py
-    lines: 504-546
+    lines: 535-577
   - path: hooks/protect-plans.sh
     lines: 1-57
-verified_at: 82cca7c
+verified_at: a61b9f8
 ---
 
 # Edit-boundary hooks

@@ -14,8 +14,8 @@ cites:
   - path: docs/adr/096-autonomous-merger-is-a-watcher-not-a-bus-effector.md
     lines: 27-30, 55-56
   - path: docs/adr/093-autonomous-review-findings-carry-resolvable-evidence.md
-    lines: 31-40
-verified_at: 49a9318
+    lines: 31-40, 129-139
+verified_at: c8d54a7
 ---
 
 # The developer as principal
@@ -48,8 +48,9 @@ reporting. Each has a counterpart here.
   review account, and the merger is its own account, since the forge's
   self-review rule keys on the account.
 - **Evidence checks.** An autonomous review's finding counts only if its
-  `path:line` citation resolves. When this was first measured, a large share of
-  cited findings pointed at lines that did not exist.
+  `path:line` citation resolves. When this was first measured, 90 of 221 cited
+  findings could not be followed as written; checked one by one, one of them
+  pointed at a line that does not exist.
 
 ## What it costs / where it does not reach
 

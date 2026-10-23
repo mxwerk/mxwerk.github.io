@@ -10,7 +10,7 @@ cites:
   - path: scripts/cron/merge-exec.sh
     lines: 1-18, 57-60
   - path: agents/registry.json
-    lines: 339-350
+    lines: 348-359
   - path: docs/adr/096-autonomous-merger-is-a-watcher-not-a-bus-effector.md
     lines: 1-8, 120-160, 174-184
   - path: docs/adr/067-decline-slice-2b-gate-flip.md
@@ -25,7 +25,7 @@ cites:
     lines: 1-38
   - path: docs/TODO/2026-10-01-protected-paths-are-shaped-for-one-repo.md
     lines: 1-51
-verified_at: 49a9318
+verified_at: a61b9f8
 ---
 
 # Shadow before authority
