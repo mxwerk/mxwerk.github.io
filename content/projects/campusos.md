@@ -1,6 +1,6 @@
 ---
 title: CampusOs — Full-Stack Student App
-description: Full-stack student application bundling grades, calendar and Moodle events, enrollment certificate, mensa plan and university mail in one dashboard. Built with Next.js 16, Supabase, and Feature-Sliced Design. Team of 6.
+description: Full-stack student application bundling grades, calendar and Moodle events, enrollment certificate, mensa plan and university mail in one dashboard. Built in TypeScript with Next.js 16, Supabase, and Feature-Sliced Design. Team of 6.
 tags:
   - web
   - fullstack
