@@ -65,6 +65,12 @@ itself, and one gate runner whose exit code decides whether a change lands.
   the forge enforces. → [[wiki/harness/concepts/shadow-before-authority|shadow before authority]]
 - **Review is a different process under a different credential,** so the
   reviewer is not the author. → [[wiki/harness/components/issue-to-pr-chain|issue-to-PR chain]]
+- **A success code is not a result.** A reviewer once reported a label as set
+  when it was not: Forgejo had answered 201, and the reviewer guessed a
+  permissions problem. The cause was in the API itself: the issue-edit object
+  has no labels field, so the field is dropped for every caller, a known
+  upstream issue. The reviewer now sets labels through the pull-request
+  endpoint and reports what it reads back, not what it sent.
 
 The agents' own claims are checked by a separate project,
 [[projects/agent-warden|agent-warden]].
