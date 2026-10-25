@@ -33,6 +33,8 @@ Running both phases made the trade-offs concrete rather than theoretical.
 
 **CI/CD:** GitLab CI/CD pipelines with Docker Compose environments (dev / prod / spec). gitleaks for secret scanning in every pipeline run.
 
+**Coverage gate:** Vitest coverage minimums of 85 / 80 / 85 / 85 % (statements / branches / functions / lines) for backend and frontend, in both phases. CI runs the tests with coverage on every merge request and on main, and a value below the minimum fails the job. Branches sit lower because of rarely reached error paths in the validation and auth middleware.
+
 **Release management:** Semantic versioning (SemVer) with release candidates (RC), CHANGELOG generation, handoff bundles for deployment.
 
 **Kubernetes & load testing:** a local kind cluster with a Horizontal Pod Autoscaler (3–8 replicas at 70 % CPU), JMeter load tests against the ingress, and Prometheus/Grafana monitoring.

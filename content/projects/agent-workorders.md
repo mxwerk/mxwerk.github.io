@@ -96,6 +96,13 @@ Four modules — user, agent, project, work order — each in the layers
 - Integration tests start a PostgreSQL and a Keycloak container and fetch real
   tokens instead of forging them. CI runs the full `./gradlew check`, no fast
   subset.
+- A preflight job checks the runner before the suite starts. It exists
+  because the container tests once failed in CI with "no valid Docker
+  environment" while the daemon was reachable: the runner's hostname held
+  an underscore, which `java.net.URI` rejects under RFC 3986, so the Docker
+  client got no host. The check now fails such a name in two seconds and
+  says why, and it caught the same name again when it drifted back into the
+  runner config.
 
 → [[wiki/agent-workorders/components/quality-gate|the quality gate]]
 
