@@ -34,7 +34,7 @@ Java 25 / Spring Boot 4.1 backend with DDD modules guarded by ArchUnit, an outbo
 Full-stack student app: Next.js 16, Supabase (self-hosted), Feature-Sliced Design, Playwright E2E. Built in a team of six.
 
 #### [[projects/devops-portal|Studierendenportal — DevOps Evolution]]
-Took an existing student portal through two architectural phases (Turborepo monorepo → polyrepo with OpenAPI contracts). GitLab CI/CD, Docker, Kubernetes (local kind cluster, HPA), Playwright, SemVer releases.
+A student applicant portal I built alone across two courses, taken through two architectural phases (Turborepo monorepo → polyrepo with OpenAPI contracts). GitLab CI/CD, Docker, Kubernetes (local kind cluster, HPA), Playwright, SemVer releases.
 
 ---
 
