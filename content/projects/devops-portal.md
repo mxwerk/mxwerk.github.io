@@ -47,6 +47,7 @@ Running both phases made the trade-offs concrete rather than theoretical.
 |---|---|
 | Frontend | TypeScript, React, Vite |
 | Backend | Express.js, Node.js |
+| Database | MongoDB (Mongoose) |
 | Auth | Arctic (OAuth 2.0 / PKCE), JWT, bcryptjs |
 | Realtime | Socket.IO |
 | Validation | Zod |

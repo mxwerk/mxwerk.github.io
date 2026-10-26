@@ -39,6 +39,8 @@ flowchart LR
 
 Interactive work and unattended work share the same floor: hooks on the edit
 itself, and one gate runner whose exit code decides whether a change lands.
+The gate runner, the message-bus router and most helper scripts are written in
+Python, the hooks in shell and Python.
 
 ## Decisions that shaped it
 
