@@ -7,14 +7,23 @@ kind: index
 
 Distilled, cross-linked knowledge about this project. Every page cites the
 files it describes and the commit it was checked against (`cites:` /
-`verified_at:`); `check_wiki.py --project --repo .` reports a page STALE once a
-cited file changes. Pages start as `draft: true`; the operator approves a page
-by setting `draft: false`.
+`verified_at:`). `node scripts/check-wiki-freshness.mjs --repo .` reports a page
+STALE once a commit changes a cited file without touching the page, and it runs
+in CI on every pull request and every push to `main`. Pages start as
+`draft: true`; the operator approves a page by setting `draft: false`, and the
+checker skips a draft because an unapproved page claims nothing.
+
+Until 2026-10-20 this paragraph named `check_wiki.py --project --repo .`, and
+that program existed nowhere — not in this repo, not in the user-scope config,
+and no CI job invoked any wiki checker. Eleven pages carried a `verified_at:`
+that nothing validated, which reads as evidence and was not. Recorded here
+rather than quietly corrected, because a reader who trusted the old sentence
+deserves to know which of the two they were reading (#112).
 
 ## Concepts
 
 - [[wiki/agent-warden/concepts/claim-evidence-verdict|Claim, evidence, verdict]] — Every check turns an agent's claim plus an observable artifact into a Verdict that is confirmed, refuted or abstain, and a missing signal yields abstain, never a clean pass.
-- [[wiki/agent-warden/concepts/measured-recall|Measured recall, with its n]] — On nine hand-labelled claims the LLM extractor finds seven and the regex extractor three, and that figure is a gap measurement on a corpus built to defeat the regex, not the system's recall.
+- [[wiki/agent-warden/concepts/measured-recall|Measured recall, with its n]] — On nine hand-labelled claims the regex extractor finds three, the default 3B model all nine but with four false positives, and a 7B model seven with none, so recall alone would pick the wider net over the better one.
 
 ## Decisions
 

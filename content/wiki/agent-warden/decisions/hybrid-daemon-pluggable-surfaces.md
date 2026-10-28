@@ -1,6 +1,6 @@
 ---
 title: One daemon, pluggable surfaces
-description: A single always-on daemon owns capture and judgment, and the CLI, MCP and editor clients are thin HTTP clients of it, so adding a surface needs no daemon rework.
+description: A single always-on daemon owns capture and judgment, and the CLI and MCP clients are thin HTTP clients of it, so adding a surface needs no daemon rework.
 draft: false
 cites:
   - path: docs/adr/0008-product-form-hybrid-daemon.md
@@ -17,11 +17,9 @@ cites:
     lines: 12-12
   - path: src/surfaces/mcp/index.ts
     lines: 40-40
-  - path: src/surfaces/vscode/webview/ObservabilityViewProvider.ts
-    lines: 1-16
-  - path: src/surfaces/vscode/webview/ChatViewProvider.ts
-    lines: 1-20
-verified_at: ae9e10a
+  - path: docs/adr/0025-the-vs-code-surface-is-removed.md
+    lines: 7-15, 47-56, 77-90
+verified_at: 7c50953
 ---
 
 # One daemon, pluggable surfaces
@@ -29,8 +27,8 @@ verified_at: ae9e10a
 > **TL;DR** — One always-on daemon captures agent activity and runs the checks.
 > The CLI and the MCP adapter are thin clients that talk to it over HTTP on the
 > loopback interface. The editor was first meant to be the viewer; a later
-> decision demoted it to one client among several, and the editor panel has
-> not been moved onto the daemon yet.
+> decision demoted it to one client among several, and a third removed it —
+> it was never moved onto the daemon in between.
 > [[wiki/agent-warden/index|↑ Wiki]]
 
 ## The problem
@@ -45,8 +43,10 @@ critic model's memory on top of the editor's.
 - A daemon owns capture, the grounding harness and the local critic, and is
   the single source of truth.
 - Display is a set of clients attached over the daemon's local API: a CLI as
-  the primary surface, an MCP adapter that is advisory only, an optional web
-  dashboard, and the VS Code panel as an optional client.
+  the primary surface, an MCP adapter that is advisory only, and an optional
+  web dashboard. The VS Code panel was listed here as a fourth, optional
+  client; it was removed instead, because it never became a client of the
+  daemon at all.
 - The internal transport is HTTP, bound to `127.0.0.1`. The client class
   states that a surface talks to the daemon only over HTTP and JSON and never
   imports daemon internals.
@@ -55,7 +55,7 @@ critic model's memory on top of the editor's.
 | Option | Why not |
 |---|---|
 | Editor extension only | Loses events while the editor is closed; stacks the critic's RAM on the editor host. |
-| Editor as the only viewer | Wrong place for an operator who works in a terminal; later superseded. |
+| Editor as the only viewer | Wrong place for an operator who works in a terminal; later superseded, then removed. |
 | MCP as the internal transport | Handshake and JSON-RPC overhead for non-LLM clients, a browser cannot use it, and it ties the core to an evolving spec. |
 | Unix socket | A browser cannot use it, so HTTP would be rebuilt later. |
 
@@ -65,12 +65,16 @@ critic model's memory on top of the editor's.
 - The MCP surface must stay advisory, or it silently crosses the line from
   informing to acting on the agent.
 - The loopback bind is deliberate: verdict payloads may hold sensitive data.
-- The decision is ahead of the code. The CLI and the MCP adapter go through
-  the daemon client; the VS Code panel still queries the model runtime and the
-  metrics store directly.
+- The decision was ahead of the code for three months. The CLI and the MCP
+  adapter go through the daemon client; the VS Code panel never did — it
+  queried the model runtime and the metrics store directly until it was
+  deleted, which is the gap that made deleting it cheaper than converting it.
 
 ## Later changes
 
 The viewer half of the first decision was superseded by the pluggable-client
-decision; the daemon-owns-capture half stands. The MCP surface is described in
+decision; the daemon-owns-capture half stands. The editor client that decision
+kept as optional was then removed outright, answering a follow-up it had left
+open — so the surfaces that exist are the CLI and MCP, with the verdict GUI
+living in the sibling cockpit repo. The MCP surface is described in
 [[wiki/agent-warden/components/mcp-surface]] and the daemon in [[wiki/agent-warden/components/daemon]].

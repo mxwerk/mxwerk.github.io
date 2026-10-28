@@ -6,12 +6,12 @@ cites:
   - path: docs/adr/0024-a-gate-reads-its-rules-from-the-commit.md
     lines: 93-108, 119-130, 153-172, 227-250, 300-321, 346-349, 454-457, 499-532
   - path: .claude/project-config.yml
-    lines: 1-33
+    lines: 1-37
   - path: .forgejo/workflows/ci.yml
-    lines: 41-46, 73-100, 125-131, 181-228, 242-249
+    lines: 48-53, 80-107, 167-173, 225-272, 286-293
   - path: scripts/gate-artifact.py
     lines: 1-25
-verified_at: ae9e10a
+verified_at: 7c50953
 ---
 
 # The CI gate reads its rules from the commit
@@ -41,7 +41,10 @@ the commit, or pinned by it to a verifiable digest.
   runner and only the rulesets the lock pins. CI fails if artifact and lock
   disagree in either direction, so a forgotten rebuild cannot quietly narrow the
   scan.
-- **A list replaces the claim.** The config names the three CI jobs instead.
+- **A list replaces the claim.** The config names the CI jobs instead — four
+  of them since #112 added `wiki-freshness`. The list is the enforcement: it
+  cannot read as true while a job it names is missing, which the claim it
+  replaced could.
 - **One exception.** `npm audit` reads an advisory database at run time. It
   stays, because it judges the code against the world, where re-evaluation is
   the point.
