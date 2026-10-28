@@ -32,8 +32,8 @@ cites:
   - path: docs/audits/detection-recall.md
     lines: 6-16, 22-32
   - path: docs/audits/critic-judge-recall.md
-    lines: 8-20
-verified_at: ae9e10a
+    lines: 6-27
+verified_at: bbb1164
 ---
 
 # The critics
@@ -71,10 +71,16 @@ Every critic abstains (confidence 0) when its signal source is absent, rather th
   were authored together with the detectors, so this shows the pipeline is
   internally consistent and a regression floor, not real-world recall,
   especially for skipped-step.
-- **Judging critics:** handoff-semantic 6 of 6, duplicate-work 4 of 4, with no
-  false positives or negatives (`critic-judge-recall.md`). The audit calls the
-  set small and hand-labelled, "necessary, not sufficient"; it needs a live
-  model and does not run in the CI gate.
+- **Judging critics:** handoff-semantic 14 of 16, duplicate-work 4 of 8 — one
+  false positive and one false negative on the first, one and three on the
+  second (`critic-judge-recall.md`), where a false positive means the critic
+  fired on a fixture labelled `confirmed`. The audit calls the set small and
+  hand-labelled, "necessary, not sufficient"; it needs a live model and does not
+  run in the CI gate. These replace an earlier *6 of 6 and 4 of 4 with no
+  errors*, which came from a report no live run had ever produced — the judge
+  spec died at vitest's default timeout, so the committed numbers were never
+  measured (#111). The real figures are considerably worse, and the duplicate
+  critic at 4 of 8 is the reason both stay advisory.
 
 ## Limits
 

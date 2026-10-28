@@ -4,13 +4,13 @@ description: The daemon is a loopback-by-default HTTP server plus an opt-in file
 draft: false
 cites:
   - path: src/core/daemon/server.ts
-    lines: 27-33, 104-105, 262-269, 281-323, 358-381
+    lines: 27-33, 104-105, 282-289, 301-343, 378-401
   - path: src/core/daemon/index.ts
-    lines: 10-20
+    lines: 12-22
   - path: src/core/daemon/router.ts
-    lines: 65-83, 101-123, 156-282
+    lines: 67-85, 103-125, 158-284
   - path: src/core/daemon/watcher.ts
-    lines: 4-16, 47-58, 119-142
+    lines: 4-16, 47-58, 65-84, 146-169
   - path: src/core/harness/transcript.ts
     lines: 15-20, 51-81, 108-127, 203-247, 249-270
   - path: src/core/harness/crossSessionEvidence.ts
@@ -21,7 +21,7 @@ cites:
     lines: 7-8, 35-46
   - path: docs/adr/0014-persistent-telemetry-daemon-and-cockpit-consumer.md
     lines: 7-14, 53-58
-verified_at: ae9e10a
+verified_at: 7c50953
 ---
 
 # The localhost daemon
@@ -56,6 +56,14 @@ it as a user-level service in watch and telemetry mode (ADR 0014). See
   handoff checks if `WARDEN_TRANSCRIPT` is set, plus the collision check if
   `WARDEN_TRANSCRIPT_DIR` is set. Model calls stay pull-only. The latest
   snapshot lives in memory and is what `/verdicts` returns.
+- **Escalation enrichment** (`watcher.ts`): a low-confidence verdict is
+  re-judged on the strong tier, and the escalated verdict is cached by the
+  finding's signature so it survives later cycles instead of appearing in one
+  snapshot and vanishing. A re-attached verdict is stripped of its one-shot
+  measurements: `escalationLatencyMs` describes a call that happened once, so
+  re-emitting it every cycle would weight the latency histogram by how long a
+  finding persists rather than by what the calls cost. `disagreement` stays — it
+  is a property of the finding, true for as long as the finding stands (#120).
 - **Transcript to claims** (`transcript.ts`): each JSONL line is parsed and
   malformed ones skipped. Edit, Write, MultiEdit and NotebookEdit tool calls
   give claimed paths, made repo-relative with outside-repo paths dropped;

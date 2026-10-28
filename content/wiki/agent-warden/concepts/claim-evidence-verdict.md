@@ -6,12 +6,12 @@ cites:
   - path: src/core/harness/critic.ts
     lines: 9-14, 21-22, 24-40, 52-90
   - path: src/core/harness/types.ts
-    lines: 1-8, 9-27, 28-43
+    lines: 1-8, 9-27, 28-52
   - path: README.md
     lines: 15-24
   - path: docs/adr/0010-grounding-harness-design.md
     lines: 21-26, 70-72, 78-81, 90-94
-verified_at: ae9e10a
+verified_at: 7c50953
 ---
 
 # Claim, evidence, verdict
@@ -47,6 +47,14 @@ case where the local and escalated models disagreed
 ([[wiki/agent-warden/decisions/two-tier-escalation]]). `truncatedChars` is set when the evidence
 exceeded a size budget, so the verdict was judged on a clipped artifact and is
 not a judgement on the whole change.
+
+A third field sits between those two in the type and is not a caution flag:
+`escalationLatencyMs` records the wall-clock milliseconds the strong-tier call
+added, on the escalated verdict only, and is absent on primary verdicts and on
+any escalation that produced no verdict at all. It is carried here rather than
+on the escalation result because the snapshot flattens to `Verdict[]`, which
+would otherwise drop it before telemetry sees it (#119,
+[[wiki/agent-warden/components/verdict-telemetry]]).
 
 ## Abstain means "could not check"
 

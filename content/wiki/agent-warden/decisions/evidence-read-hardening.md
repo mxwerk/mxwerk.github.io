@@ -14,16 +14,16 @@ cites:
   - path: src/core/harness/verifiedRead.ts
     lines: 89-90, 116-130
   - path: src/core/harness/evidenceBudget.ts
-    lines: 71-72, 93-122
+    lines: 72-73, 94-123
   - path: src/core/harness/gitEvidence.ts
     lines: 97-108
   - path: src/surfaces/mcp/guards.ts
     lines: 48, 97-168
   - path: src/core/daemon/router.ts
-    lines: 101-136
+    lines: 103-138
   - path: README.md
-    lines: 191-225
-verified_at: ae9e10a
+    lines: 190-224
+verified_at: 7c50953
 ---
 
 # Evidence-read hardening

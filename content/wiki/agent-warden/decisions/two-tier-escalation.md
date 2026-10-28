@@ -6,14 +6,14 @@ cites:
   - path: docs/adr/0009-cloud-escalation-relaxes-local-only.md
     lines: 13-23, 40-49, 59-63, 76-105, 115-121, 130-134
   - path: src/core/harness/escalate.ts
-    lines: 1-22, 39-50, 65-68, 129-184
+    lines: 1-27, 44-55, 57-81, 83-86, 147-208
   - path: docs/audits/escalation-comparison.md
     lines: 12-21, 23-31
   - path: src/core/harness/types.ts
     lines: 28-35
   - path: src/core/config/env.ts
     lines: 151-154
-verified_at: ae9e10a
+verified_at: 7c50953
 ---
 
 # Two-tier escalation
@@ -65,6 +65,19 @@ project's data. The question was where the strong tier runs.
 The original plan called the strong tier "cloud", with a euro budget and an
 8 s latency target. The budget went with the cloud; the 8 s proved
 unreachable and became 40 s
-([[wiki/agent-warden/decisions/evidence-read-hardening]]). Why the verdict carries `disagreement` as a field:
+([[wiki/agent-warden/decisions/evidence-read-hardening]]).
+
+Until #119 that 40 s clause had a mechanism bounding it and nothing measuring
+it, so the binding half of the guardrail could not be checked in operation.
+`escalate()` now times the strong-tier round trip and returns it as
+`EscalationResult.latencyMs`; the daemon carries it onto the escalated verdict
+as `escalationLatencyMs`, and telemetry turns it into a histogram
+([[wiki/agent-warden/components/verdict-telemetry]]). The timing starts where the strong tier
+does, not around the whole call, because the crisp and rate-limited paths
+return without reaching the 14B at all. A timeout records nothing: its duration
+is the configured ceiling's value rather than the model's, so feeding it to the
+p95 would measure the config.
+
+Why the verdict carries `disagreement` as a field:
 [[wiki/agent-warden/concepts/claim-evidence-verdict]]. The recall that feeds this tiering:
 [[wiki/agent-warden/concepts/measured-recall]].
