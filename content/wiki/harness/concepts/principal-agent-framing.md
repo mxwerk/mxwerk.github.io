@@ -48,9 +48,9 @@ reporting. Each has a counterpart here.
   review account, and the merger is its own account, since the forge's
   self-review rule keys on the account.
 - **Evidence checks.** An autonomous review's finding counts only if its
-  `path:line` citation resolves. When this was first measured, 90 of 221 cited
-  findings could not be followed as written; checked one by one, one of them
-  pointed at a line that does not exist.
+  `path:line` citation resolves. The first count of unresolvable citations,
+  90 of 221, came from a check that was itself wrong; how that was found is in
+  [[wiki/harness/concepts/verify-the-verifier#a-check-that-was-itself-wrong|verify the verifier]].
 
 ## What it costs / where it does not reach
 
