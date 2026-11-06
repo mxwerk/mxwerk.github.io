@@ -14,7 +14,9 @@ date: 2026-10-07
 > the typing; what a reviewer would have caught is moved into checks that run
 > the same way every time, and an automated decision gets authority only after
 > it has been measured without it. The system is a single-operator setup on a
-> self-hosted forge, and its merge step is still not autonomous.
+> self-hosted forge, and its merge step now merges without me: at most one
+> merge per run, on this one repository, behind a kill switch the forge
+> enforces.
 
 ## The problem
 
@@ -34,7 +36,7 @@ flowchart LR
   G --> L[Land or stop]
   I[Labeled issue] --> C[Issue-to-PR chain<br/>cron + message bus]
   C --> R[Independent review<br/>own credential]
-  R -.-> W[Merge decision<br/>shadow only]
+  R --> W[Merge decision<br/>armed: 1 merge per run]
 ```
 
 Interactive work and unattended work share the same floor: hooks on the edit
