@@ -28,6 +28,7 @@ I was one of six. My parts:
 - **The workspace for the team's AI assistants.** The Claude Code setup the team worked in: the commands for issue, fix and implementation work, the hooks that check edits and commits, the project rules, and several of the project's own skills. A teammate set up the base and added the third-party skill packs.
 - **The mail feature.** The BHT mailbox inside the app, over IMAP: reading, filters, hiding mails, and the tests for it.
 - **The calendar sync** and its database tables.
+- **The app's skeleton in Next.js.** The App Router structure the features are built into: the app shell and the protected route group, the locale routing with next-intl, the loading and error states of the routes, and the TanStack Query setup the features load their data through.
 - **Shared UI components** that the feature screens are built from.
 - **Database migrations** for the tables of the features above.
 
