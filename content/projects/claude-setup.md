@@ -54,9 +54,6 @@ repository, [[projects/agent-cockpit|agent-cockpit]] and
 **Test-driven development:** the feature workflow writes the tests first and
 has to show them failing for the right reason — the feature missing, not a
 typo or a wrong import — before any implementation is written (RED → GREEN).
-Since November 2026 the pull-request path enforces the same: CI fails a code
-change that touches no test, and the reviewer rates a behaviour change without
-a recorded failing run as a major finding.
 
 ## Decisions that shaped it
 
