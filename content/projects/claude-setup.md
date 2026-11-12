@@ -57,6 +57,12 @@ Python, the hooks in shell and Python.
   routes around it. → [[wiki/harness/components/edit-boundary-hooks|component]]
 - **"Could not check" is not "passed".** The gate runner reports the two
   apart. → [[wiki/harness/components/gate-runner|component]]
+- **A test comes before the code, on the pull-request path too.** The agent
+  that writes tests works red-green-refactor: a failing test first, then the
+  code. That rule was prose until November 2026; now this repository's CI fails
+  a pull request that changes code and touches no test, and the reviewer grades
+  an untested behaviour change as major unless the description shows the RED
+  proof, the test failing without the change.
 
 ## How I know it works
 
@@ -84,6 +90,9 @@ The agents' own claims are checked by a separate project,
 - One operator, one server. Nothing here has been run by a team.
 - The autonomous merger acts on this repository only; the three project repos
   still merge by hand.
+- The test-before-code gate runs in this repository's CI only; the three
+  project repos do not have it yet. CI checks that a test was touched, not
+  that it is the right one; that stays the reviewer's call.
 - Rules about *how to reason* are still prose and hold only as long as the
   agent follows them. → [[wiki/harness/decisions/judgment-rules-encoding|decision]]
 - A known defect: loops that open change requests still act under the
