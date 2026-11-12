@@ -35,6 +35,8 @@ Running both phases made the trade-offs concrete rather than theoretical.
 
 **Coverage gate:** Vitest coverage minimums of 85 / 80 / 85 / 85 % (statements / branches / functions / lines) for backend and frontend, in both phases. CI runs the tests with coverage on every merge request and on main, and a value below the minimum fails the job. Branches sit lower because of rarely reached error paths in the validation and auth middleware.
 
+**Architecture gates:** the layer rules are written down in an ADR (domain-driven design with a CQRS split, after Evans and Fowler) and enforced by tools, not by review. dependency-cruiser checks 21 rules across the monorepo — for example, the backend domain may not import Express, Mongoose or Socket.IO, the application layer may not reach infrastructure, and features talk to each other only through their barrel files. eslint-plugin-boundaries adds an allow-list of import directions per layer, with everything else disallowed. Both run in lefthook pre-commit and pre-push hooks and as CI jobs that fail the merge request; the polyrepo carried the backend and frontend rules over into each repo's `check` stage. The gate needed checking too: a new import tripped the no-cycle rule only when written as a relative path, which showed that dependency-cruiser had been silently dropping every `@/` alias import from its graph. I fixed the config, recorded the finding in an ADR, and drained the cycle baseline to zero.
+
 **Release management:** Semantic versioning (SemVer) with release candidates (RC), CHANGELOG generation, handoff bundles for deployment.
 
 **Kubernetes & load testing:** a local kind cluster with a Horizontal Pod Autoscaler (3–8 replicas at 70 % CPU), JMeter load tests against the ingress, and Prometheus/Grafana monitoring.
@@ -54,6 +56,7 @@ Running both phases made the trade-offs concrete rather than theoretical.
 | Monorepo | pnpm, Turborepo |
 | API contracts | OpenAPI / Swagger (contract-first) |
 | Testing | Playwright (E2E), Vitest, Supertest |
+| Architecture gates | dependency-cruiser, eslint-plugin-boundaries, lefthook |
 | CI/CD | GitLab CI/CD, Docker Compose, gitleaks |
 | Orchestration | Kubernetes (kind), HPA |
 | Load & monitoring | JMeter, Prometheus, Grafana |
