@@ -45,6 +45,19 @@ itself, and one gate runner whose exit code decides whether a change lands.
 The gate runner, the message-bus router and most helper scripts are written in
 Python, the hooks in shell and Python.
 
+Feature work follows two fixed routes. **Spec-driven development:** a `/sdd`
+skill runs specify → plan → tasks, each stage checked by its own critic agent
+and stopped at an approval gate before the next one starts; the task list it
+ends with is what the orchestrator dispatches. Thirteen features across this
+repository, [[projects/agent-cockpit|agent-cockpit]] and
+[[projects/agent-warden|agent-warden]] have a spec and a plan on record.
+**Test-driven development:** the feature workflow writes the tests first and
+has to show them failing for the right reason — the feature missing, not a
+typo or a wrong import — before any implementation is written (RED → GREEN).
+Since November 2026 the pull-request path enforces the same: CI fails a code
+change that touches no test, and the reviewer rates a behaviour change without
+a recorded failing run as a major finding.
+
 ## Decisions that shaped it
 
 - **A deterministic gate takes the reviewer's place on trunk.** Green, or the
