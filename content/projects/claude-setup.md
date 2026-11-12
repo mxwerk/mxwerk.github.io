@@ -7,6 +7,7 @@ tags:
   - engineering
 date: 2026-10-07
 ---
+
 # Engineering AI-Assisted Development
 
 > [!summary] TL;DR
@@ -93,7 +94,7 @@ The agents' own claims are checked by a separate project,
 - The test-before-code gate runs in this repository's CI only; the three
   project repos do not have it yet. CI checks that a test was touched, not
   that it is the right one; that stays the reviewer's call.
-- Rules about *how to reason* are still prose and hold only as long as the
+- Rules about _how to reason_ are still prose and hold only as long as the
   agent follows them. → [[wiki/harness/decisions/judgment-rules-encoding|decision]]
 - A known defect: loops that open change requests still act under the
   operator's account, which blurs who did what. It is tracked as must-fix.
